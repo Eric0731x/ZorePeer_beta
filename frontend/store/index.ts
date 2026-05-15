@@ -1,14 +1,16 @@
 import { create } from "zustand";
-import type { Workspace, Task, Notification } from "@/lib/api";
+import type { Workspace, Notification } from "@/lib/api";
 
 interface AppState {
-  workspaces: Workspace[];
+  workspaces: (Workspace & { taskCount?: number })[];
   activeWorkspaceId: string | null;
+  sidebarCollapsed: boolean;
   notifications: Notification[];
   unreadCount: number;
 
-  setWorkspaces: (ws: Workspace[]) => void;
+  setWorkspaces: (ws: (Workspace & { taskCount?: number })[]) => void;
   setActiveWorkspace: (id: string) => void;
+  setSidebarCollapsed: (v: boolean) => void;
   setNotifications: (n: Notification[]) => void;
   markNotificationRead: (id: string) => void;
 }
@@ -16,11 +18,13 @@ interface AppState {
 export const useAppStore = create<AppState>((set) => ({
   workspaces: [],
   activeWorkspaceId: null,
+  sidebarCollapsed: false,
   notifications: [],
   unreadCount: 0,
 
   setWorkspaces: (ws) => set({ workspaces: ws }),
   setActiveWorkspace: (id) => set({ activeWorkspaceId: id }),
+  setSidebarCollapsed: (v) => set({ sidebarCollapsed: v }),
   setNotifications: (n) =>
     set({ notifications: n, unreadCount: n.filter((x) => !x.is_read).length }),
   markNotificationRead: (id) =>

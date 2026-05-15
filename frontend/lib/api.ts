@@ -90,4 +90,14 @@ export const api = {
     markRead: (id: string) =>
       request<Notification>(`/api/v1/notifications/${id}/read`, { method: "PATCH" }),
   },
+  export: {
+    latex: async (taskId: string): Promise<Blob> => {
+      const res = await fetch(`${BASE}/api/v1/tasks/${taskId}/export/latex`);
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(`Export API ${res.status}: ${text}`);
+      }
+      return res.blob();
+    },
+  },
 };
